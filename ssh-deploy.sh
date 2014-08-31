@@ -10,7 +10,7 @@ fi
 	# Declare some variables
 	$vmname
 	$username
-	$password
+	$certificate
 	$saved
 
 	if [ -e "$1" ]; then
@@ -50,15 +50,15 @@ fi
 		fi
 
 		echo Uploading...
-		scp -i ${certificate} $warname ${username}@${vmname}${warname}
+		scp -i ${certificate} $warname ${username}@${vmname}:~/${warname}
 		echo
 
 		filename=$(basename ${warname} .war)
 
 		echo Deploying to Tomcat...
-			ssh -i ${certificate} -t ${username}@${vmname} "sudo rm -f /usr/local/tomcat/webapps/${filename}.war"
-			ssh -i ${certificate} -t ${username}@${vmname} "sudo rm -r -f /usr/local/tomcat/webapps/$filename"
-			ssh -i ${certificate} -t ${username}@${vmname} "sudo mv $warname /usr/local/tomcat/webapps/${filename}.war"
+			ssh -i ${certificate} -t ${username}@${vmname} "sudo rm -f /usr/share/tomcat/webapps/${filename}.war"
+			ssh -i ${certificate} -t ${username}@${vmname} "sudo rm -r -f /usr/share/tomcat/webapps/$filename"
+			ssh -i ${certificate} -t ${username}@${vmname} "sudo mv ~/$warname /usr/share/tomcat/webapps/${filename}.war"
 		echo
 
 		echo Done!
@@ -77,7 +77,7 @@ fi
 			select yn in "Yes" "No"; do
 				case $yn in
 					Yes ) 	rm -f deploy-credentials.dat;
-						echo "${vmname} ${username} ${password}" >> deploy-credentials.dat;
+						echo "${vmname} ${username} ${certificate}" >> deploy-credentials.dat;
 						echo Saved to file \"deploy-credentials.dat\";
 						break;;
 					No ) exit;;
